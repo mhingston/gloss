@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <radialGradient id="glass" cx="34%" cy="28%" r="74%">
+      <stop offset="0%" stop-color="#f4f7ff"/>
+      <stop offset="24%" stop-color="#9ec0ff"/>
+      <stop offset="52%" stop-color="#5b7cff"/>
+      <stop offset="78%" stop-color="#3b4fd4"/>
+      <stop offset="100%" stop-color="#1d2a7a"/>
+    </radialGradient>
+    <radialGradient id="mistA" cx="40%" cy="62%" r="36%">
+      <stop offset="0%" stop-color="#e9d5ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#e9d5ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="mistB" cx="66%" cy="44%" r="30%">
+      <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#67e8f9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="36%" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="68%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="ball">
+      <circle cx="64" cy="64" r="50"/>
+    </clipPath>
+  </defs>
+  <circle cx="64" cy="64" r="50" fill="url(#glass)"/>
+  <g clip-path="url(#ball)">
+    <ellipse cx="48" cy="80" rx="28" ry="20" fill="url(#mistA)"/>
+    <ellipse cx="80" cy="56" rx="22" ry="18" fill="url(#mistB)"/>
+  </g>
+  <circle cx="64" cy="64" r="50" fill="none" stroke="#142056" stroke-width="3"/>
+  <circle cx="64" cy="64" r="50" fill="none" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.6"/>
+  <ellipse cx="46" cy="44" rx="17" ry="12" fill="url(#shine)" transform="rotate(-20 46 44)"/>
+  <ellipse cx="80" cy="50" rx="4.5" ry="3.2" fill="#ffffff" fill-opacity="0.7"/>
+</svg>

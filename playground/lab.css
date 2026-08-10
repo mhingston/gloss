@@ -1,0 +1,243 @@
+:root {
+  color-scheme: light dark;
+  --lab-bg: #f3f1ee;
+  --lab-ink: #161616;
+  --lab-muted: #6d6d6d;
+  --lab-line: #e4e1dc;
+  --lab-card: #ffffff;
+  --lab-nav: #faf9f7;
+  --lab-hover: #eceae6;
+  --lab-stage-a: #ffe1c4;
+  --lab-stage-b: #f4efe8;
+  --lab-stage-c: #e8d6c8;
+  --lab-stage-d: #f7c9a8;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --lab-bg: #111111;
+    --lab-ink: #f4f2ee;
+    --lab-muted: #9a9a9a;
+    --lab-line: #2a2a2a;
+    --lab-card: #1a1a1a;
+    --lab-nav: #161616;
+    --lab-hover: #242424;
+    --lab-stage-a: #3a2418;
+    --lab-stage-b: #1b1714;
+    --lab-stage-c: #2a1c16;
+    --lab-stage-d: #3b2218;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  background: var(--lab-bg);
+  color: var(--lab-ink);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.lab {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 240px;
+  min-height: 100vh;
+}
+
+.nav,
+.knobs {
+  padding: 22px 18px;
+  background: var(--lab-nav);
+  border-right: 1px solid var(--lab-line);
+}
+
+.knobs {
+  border-right: 0;
+  border-left: 1px solid var(--lab-line);
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--lab-muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav h1,
+.stage-head h2,
+.knobs .eyebrow + * {
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 560;
+}
+
+.nav section + section {
+  margin-top: 18px;
+}
+
+.nav h2 {
+  margin: 0 0 6px;
+  color: var(--lab-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav button,
+.stage-actions button {
+  width: 100%;
+  margin: 0 0 2px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav button:hover,
+.stage-actions button:hover {
+  background: var(--lab-hover);
+}
+
+.nav button.active {
+  background: var(--lab-ink);
+  color: var(--lab-bg);
+}
+
+.stage-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.stage-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 16px;
+}
+
+.stage-head h2 {
+  margin-bottom: 4px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--lab-muted);
+  font-size: 13px;
+}
+
+.stage-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.stage-actions button {
+  width: auto;
+  background: var(--lab-card);
+  box-shadow: 0 0 0 1px var(--lab-line);
+}
+
+.stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  margin: 0 24px 24px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 20% 10%, var(--lab-stage-a) 0%, transparent 36%),
+    linear-gradient(160deg, var(--lab-stage-b), var(--lab-stage-c) 48%, var(--lab-stage-d));
+  overflow: hidden;
+}
+
+.stage.theme-light {
+  color-scheme: light;
+  --lab-stage-a: #ffe1c4;
+  --lab-stage-b: #f4efe8;
+  --lab-stage-c: #e8d6c8;
+  --lab-stage-d: #f7c9a8;
+}
+
+.stage.theme-dark {
+  color-scheme: dark;
+  --lab-stage-a: #3a2418;
+  --lab-stage-b: #1b1714;
+  --lab-stage-c: #2a1c16;
+  --lab-stage-d: #3b2218;
+}
+
+.stage.is-closed {
+  align-items: end;
+  justify-items: end;
+  padding: 36px;
+}
+
+#gloss-root {
+  width: max-content;
+  max-width: calc(100% - 32px);
+}
+
+.knobs label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+
+.knobs label.stack {
+  display: grid;
+  gap: 6px;
+}
+
+.knobs input[type='text'],
+.knobs input:not([type]),
+.knobs textarea,
+.knobs select,
+.knobs input[type='range'] {
+  width: 100%;
+}
+
+.knobs input:not([type='checkbox']):not([type='range']),
+.knobs textarea,
+.knobs select {
+  padding: 8px 10px;
+  border: 1px solid var(--lab-line);
+  border-radius: 10px;
+  background: var(--lab-card);
+  color: inherit;
+}
+
+@media (max-width: 980px) {
+  .lab {
+    grid-template-columns: 1fr;
+  }
+
+  .nav,
+  .knobs {
+    border: 0;
+    border-bottom: 1px solid var(--lab-line);
+  }
+}
