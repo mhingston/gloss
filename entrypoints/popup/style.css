@@ -77,9 +77,9 @@ header p,
   display: block;
   width: 100%;
   min-height: 42px;
-  border: 1px solid #d4d4d4;
+  border: 1px solid var(--gloss-line);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--gloss-bg-soft);
   background-clip: padding-box;
   color: var(--gloss-fg);
   font-size: 13px;
@@ -89,9 +89,14 @@ header p,
   box-shadow: none;
 }
 
+.settings input::placeholder {
+  color: var(--gloss-faint);
+  opacity: 1;
+}
+
 .settings input:focus,
 .settings select:focus {
-  border-color: #111111;
+  border-color: var(--gloss-fg);
   outline: none;
   box-shadow: none;
 }
