@@ -1,9 +1,8 @@
+export const DEFAULT_PROTOCOL: ApiProtocol = 'openai-chat';
+export const DEFAULT_BASE_URL = 'https://api.x.ai/v1';
 export const DEFAULT_MODEL = 'grok-4.5';
 
-export const MODELS = [
-  { id: 'grok-4.5', label: 'Grok 4.5' },
-  { id: 'grok-4.3', label: 'Grok 4.3 (cheaper)' },
-] as const;
+export type ApiProtocol = 'openai-chat' | 'openai-responses' | 'anthropic-messages';
 
 export type SitePrompt = {
   id: string;
@@ -46,6 +45,8 @@ export type PageContext = {
 export type Settings = {
   apiKey: string;
   model: string;
+  protocol: ApiProtocol;
+  baseUrl: string;
 };
 
 export type GlossRequest = {
