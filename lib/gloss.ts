@@ -1,7 +1,6 @@
 import { extractStreamableCss, parseModelOutput } from './css';
-import type { PageContext } from './types';
-
-const XAI_CHAT_URL = 'https://api.x.ai/v1/chat/completions';
+import { streamOpenAIChat } from './llm/openaiChat';
+import type { PageContext, Settings } from './types';
 
 const SHARED_RULES = `Rules:
 - Start with the CSS fence immediately. No preface.
@@ -53,9 +52,8 @@ ${SHARED_RULES}
 - No network requests, no cookies/localStorage/sessionStorage access, no credentials, no innerHTML of untrusted strings, no eval of page strings.
 - Do not navigate or replace location. Guard every querySelector. Fail silently if a node is missing.`;
 
-export async function glossWithGrok(options: {
-  apiKey: string;
-  model: string;
+export async function glossWithModel(options: {
+  settings: Settings;
   prompt: string;
   screenshotDataUrl: string;
   pageContext: PageContext;
@@ -65,6 +63,10 @@ export async function glossWithGrok(options: {
   allowJs: boolean;
   onProgress?: (update: { text: string; css: string }) => void;
 }): Promise<{ css: string; js: string; summary?: string }> {
+  if (options.settings.protocol !== 'openai-chat') {
+    throw new Error('That API type is not supported by this version of Gloss.');
+  }
+
   const history =
     options.promptHistory.length > 0
       ? options.promptHistory.map((p, i) => `${i + 1}. ${p}`).join('\n')
@@ -89,52 +91,22 @@ export async function glossWithGrok(options: {
     `User request: ${options.prompt}`,
   ].join('\n\n');
 
-  const response = await fetch(XAI_CHAT_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${options.apiKey}`,
-      'Content-Type': 'application/json',
+  const text = await streamOpenAIChat({
+    baseUrl: options.settings.baseUrl,
+    apiKey: options.settings.apiKey,
+    model: options.settings.model,
+    systemPrompt: options.allowJs ? SYSTEM_PROMPT_JS : SYSTEM_PROMPT_CSS,
+    userText,
+    screenshotDataUrl: options.screenshotDataUrl,
+    onPartial(partial) {
+      options.onProgress?.({
+        text: partial,
+        css: extractStreamableCss(partial),
+      });
     },
-    body: JSON.stringify({
-      model: options.model,
-      stream: true,
-      temperature: 0.4,
-      max_tokens: 8000,
-      messages: [
-        { role: 'system', content: options.allowJs ? SYSTEM_PROMPT_JS : SYSTEM_PROMPT_CSS },
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'image_url',
-              image_url: { url: options.screenshotDataUrl, detail: 'high' },
-            },
-            { type: 'text', text: userText },
-          ],
-        },
-      ],
-    }),
   });
 
-  if (!response.ok) {
-    const raw = await response.text();
-    throw new Error(formatXaiError(response.status, raw));
-  }
-
-  if (!response.body) {
-    throw new Error('Grok returned an empty stream.');
-  }
-
-  const text = await readSseText(response.body, (partial) => {
-    options.onProgress?.({
-      text: partial,
-      css: extractStreamableCss(partial),
-    });
-  });
-
-  if (!text.trim()) {
-    throw new Error('Grok returned an empty response.');
-  }
+  if (!text.trim()) throw new Error('The configured upstream returned an empty response.');
 
   const parsed = parseModelOutput(text);
   if (!options.allowJs) parsed.js = '';
@@ -143,71 +115,10 @@ export async function glossWithGrok(options: {
   if (!hasCss && !hasJs) {
     throw new Error(
       options.allowJs
-        ? 'Grok did not return usable CSS or JavaScript. Try a more specific prompt.'
-        : 'Grok did not return usable CSS. Try a more specific prompt.',
+        ? 'The model did not return usable CSS or JavaScript. Try a more specific prompt.'
+        : 'The model did not return usable CSS. Try a more specific prompt.',
     );
   }
 
   return parsed;
-}
-
-async function readSseText(
-  body: ReadableStream<Uint8Array>,
-  onPartial: (text: string) => void,
-): Promise<string> {
-  const reader = body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let text = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-
-    const lines = buffer.split('\n');
-    buffer = lines.pop() ?? '';
-
-    for (const line of lines) {
-      const payload = line.startsWith('data:') ? line.slice(5).trim() : '';
-      if (!payload || payload === '[DONE]') continue;
-
-      let delta = '';
-      try {
-        const json = JSON.parse(payload) as {
-          choices?: Array<{ delta?: { content?: string } }>;
-        };
-        delta = json.choices?.[0]?.delta?.content ?? '';
-      } catch {
-        continue;
-      }
-
-      if (!delta) continue;
-      text += delta;
-      onPartial(text);
-    }
-  }
-
-  return text;
-}
-
-function formatXaiError(status: number, raw: string): string {
-  let detail = '';
-  try {
-    const parsed = JSON.parse(raw) as { error?: { message?: string } | string };
-    if (typeof parsed.error === 'string') detail = parsed.error;
-    else if (parsed.error?.message) detail = parsed.error.message;
-  } catch {
-    detail = raw.replace(/\s+/g, ' ').trim();
-  }
-
-  const text = detail.toLowerCase();
-  if (status === 401 || status === 403) return 'API key rejected. Check settings.';
-  if (status === 429) return 'Rate limited. Try again in a moment.';
-  if (status >= 500) return 'xAI is down. Try again shortly.';
-  if (/not available|does not have access|unknown model|does not exist/.test(text)) {
-    return 'This key cannot use that model.';
-  }
-  if (detail && detail.length <= 56) return detail;
-  return status ? `Request failed (${status}).` : 'Request failed.';
 }
