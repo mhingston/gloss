@@ -39,12 +39,15 @@ export function SettingsForm({ compact = false }: Props) {
     return <p className="muted">Loading…</p>;
   }
 
+  const endpoint = protocol === 'openai-responses' ? '/responses' : '/chat/completions';
+
   return (
     <form className={compact ? 'settings compact' : 'settings'} onSubmit={onSubmit}>
       <label>
         <span>API type</span>
         <select value={protocol} onChange={(event) => setProtocol(event.target.value as ApiProtocol)}>
           <option value="openai-chat">OpenAI Chat Completions</option>
+          <option value="openai-responses">OpenAI Responses</option>
         </select>
       </label>
       <label>
@@ -81,7 +84,7 @@ export function SettingsForm({ compact = false }: Props) {
         />
       </label>
       <p className="hint">
-        Gloss appends <code>/chat/completions</code> to the base URL. Existing installs keep using xAI at{' '}
+        Gloss appends <code>{endpoint}</code> to the base URL. Existing installs keep using xAI at{' '}
         <code>{DEFAULT_BASE_URL}</code>. Your key stays on this computer and is only sent to the configured upstream.
       </p>
       {!userScriptsOn && (

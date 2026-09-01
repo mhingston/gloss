@@ -1,5 +1,6 @@
 import { extractStreamableCss, parseModelOutput } from './css';
 import { streamOpenAIChat } from './llm/openaiChat';
+import { streamOpenAIResponses } from './llm/openaiResponses';
 import type { PageContext, Settings } from './types';
 
 const SHARED_RULES = `Rules:
@@ -63,10 +64,6 @@ export async function glossWithModel(options: {
   allowJs: boolean;
   onProgress?: (update: { text: string; css: string }) => void;
 }): Promise<{ css: string; js: string; summary?: string }> {
-  if (options.settings.protocol !== 'openai-chat') {
-    throw new Error('That API type is not supported by this version of Gloss.');
-  }
-
   const history =
     options.promptHistory.length > 0
       ? options.promptHistory.map((p, i) => `${i + 1}. ${p}`).join('\n')
@@ -91,20 +88,32 @@ export async function glossWithModel(options: {
     `User request: ${options.prompt}`,
   ].join('\n\n');
 
-  const text = await streamOpenAIChat({
+  const transportOptions = {
     baseUrl: options.settings.baseUrl,
     apiKey: options.settings.apiKey,
     model: options.settings.model,
     systemPrompt: options.allowJs ? SYSTEM_PROMPT_JS : SYSTEM_PROMPT_CSS,
     userText,
     screenshotDataUrl: options.screenshotDataUrl,
-    onPartial(partial) {
+    onPartial(partial: string) {
       options.onProgress?.({
         text: partial,
         css: extractStreamableCss(partial),
       });
     },
-  });
+  };
+
+  let text: string;
+  switch (options.settings.protocol) {
+    case 'openai-chat':
+      text = await streamOpenAIChat(transportOptions);
+      break;
+    case 'openai-responses':
+      text = await streamOpenAIResponses(transportOptions);
+      break;
+    default:
+      throw new Error('That API type is not supported by this version of Gloss.');
+  }
 
   if (!text.trim()) throw new Error('The configured upstream returned an empty response.');
 

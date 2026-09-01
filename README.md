@@ -1,6 +1,6 @@
 # Gloss
 
-Unpacked Chrome extension that personalizes any website with a floating orb. It screenshots the page, sends that plus your prompt to a configurable OpenAI-compatible Chat Completions API, and injects CSS (streamed) and optional JavaScript. Keep prompting to iterate. Changes stick per site until you reset.
+Unpacked Chrome extension that personalizes any website with a floating orb. It screenshots the page, sends that plus your prompt to a configurable OpenAI-compatible Chat Completions or Responses API, and injects CSS (streamed) and optional JavaScript. Keep prompting to iterate. Changes stick per site until you reset.
 
 **Not on the Chrome Web Store.** Chrome forbids executing model-generated JavaScript, so this is load-unpacked only for now.
 
@@ -11,9 +11,14 @@ Unpacked Chrome extension that personalizes any website with a floating orb. It 
 3. `bun run build`
 4. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and choose `.output/chrome-mv3`.
 5. On the Gloss card, turn on **Allow User Scripts** (needed to run generated JS on strict sites like x.com).
-6. Open the Gloss options page and configure your API base URL, API key, and model.
+6. Open the Gloss options page and configure the API type, base URL, API key, and model.
 
-Existing installs remain on the original xAI defaults: `https://api.x.ai/v1`, model `grok-4.5`, using the OpenAI Chat Completions wire format. You can instead point Gloss at another compatible upstream such as OpenAI, OpenRouter, or a self-hosted gateway by entering its API base URL (including `/v1` or equivalent) and model name.
+Existing installs remain on the original xAI defaults: `https://api.x.ai/v1`, model `grok-4.5`, using the OpenAI Chat Completions wire format. You can instead point Gloss at OpenAI or another compatible upstream by entering its API base URL (including `/v1` or equivalent), choosing Chat Completions or Responses, and entering its model name.
+
+Gloss appends the protocol endpoint to the configured base URL:
+
+- **OpenAI Chat Completions:** `/chat/completions`
+- **OpenAI Responses:** `/responses`
 
 ## Use
 
