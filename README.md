@@ -1,6 +1,6 @@
 # Gloss
 
-Unpacked Chrome extension that personalizes any website with a floating orb. It screenshots the page, sends that plus your prompt to a configurable OpenAI-compatible Chat Completions or Responses API, and injects CSS (streamed) and optional JavaScript. Keep prompting to iterate. Changes stick per site until you reset.
+Unpacked Chrome extension that personalizes any website with a floating orb. It screenshots the page, sends that plus your prompt to a configurable OpenAI-compatible or Anthropic Messages API, and injects CSS (streamed) and optional JavaScript. Keep prompting to iterate. Changes stick per site until you reset.
 
 **Not on the Chrome Web Store.** Chrome forbids executing model-generated JavaScript, so this is load-unpacked only for now.
 
@@ -13,12 +13,19 @@ Unpacked Chrome extension that personalizes any website with a floating orb. It 
 5. On the Gloss card, turn on **Allow User Scripts** (needed to run generated JS on strict sites like x.com).
 6. Open the Gloss options page and configure the API type, base URL, API key, and model.
 
-Existing installs remain on the original xAI defaults: `https://api.x.ai/v1`, model `grok-4.5`, using the OpenAI Chat Completions wire format. You can instead point Gloss at OpenAI or another compatible upstream by entering its API base URL (including `/v1` or equivalent), choosing Chat Completions or Responses, and entering its model name.
+Existing installs remain on the original xAI defaults: `https://api.x.ai/v1`, model `grok-4.5`, using the OpenAI Chat Completions wire format.
 
-Gloss appends the protocol endpoint to the configured base URL:
+## API upstreams
 
-- **OpenAI Chat Completions:** `/chat/completions`
-- **OpenAI Responses:** `/responses`
+Gloss supports three wire protocols behind the same prompt/restyling pipeline:
+
+| API type | Base URL example | Endpoint appended | Authentication |
+| --- | --- | --- | --- |
+| OpenAI Chat Completions | `https://api.openai.com/v1` | `/chat/completions` | `Authorization: Bearer …` |
+| OpenAI Responses | `https://api.openai.com/v1` | `/responses` | `Authorization: Bearer …` |
+| Anthropic Messages | `https://api.anthropic.com/v1` | `/messages` | `x-api-key` + Anthropic version header |
+
+The base URL is configurable, so compatible gateways and self-hosted upstreams can be used without changing Gloss. Enter the base URL before the protocol-specific endpoint, for example `https://api.example.com/v1`; Gloss appends the endpoint shown above unless it is already present.
 
 ## Use
 
