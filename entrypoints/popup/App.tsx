@@ -9,7 +9,7 @@ export default function App() {
       </header>
       <SettingsForm compact />
       <ol>
-        <li>Save your xAI key</li>
+        <li>Save your API settings</li>
         <li>Open any website</li>
         <li>Click Gloss or press ⌘⇧Y</li>
         <li>Keep prompting — each pass screenshots the page</li>
