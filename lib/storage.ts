@@ -4,6 +4,10 @@ import { DEFAULT_BASE_URL, DEFAULT_MODEL, DEFAULT_PROTOCOL } from './types';
 const SETTINGS_KEY = 'settings';
 const SITES_KEY = 'sites';
 
+// Settings saved before provider configuration existed only contained apiKey/model.
+const LEGACY_XAI_BASE_URL = 'https://api.x.ai/v1';
+const LEGACY_XAI_MODEL = 'grok-4.5';
+
 const EMPTY_SITE: SiteState = {
   css: '',
   previousCss: '',
@@ -21,15 +25,35 @@ const PROTOCOLS = new Set<ApiProtocol>([
 export async function getSettings(): Promise<Settings> {
   const data = await browser.storage.local.get(SETTINGS_KEY);
   const stored = data[SETTINGS_KEY] as Partial<Settings> | undefined;
-  const protocol = PROTOCOLS.has(stored?.protocol as ApiProtocol)
-    ? (stored?.protocol as ApiProtocol)
+
+  if (!stored) {
+    return {
+      apiKey: '',
+      model: DEFAULT_MODEL,
+      protocol: DEFAULT_PROTOCOL,
+      baseUrl: DEFAULT_BASE_URL,
+    };
+  }
+
+  const isLegacyXaiSettings = stored.protocol == null && stored.baseUrl == null;
+  if (isLegacyXaiSettings) {
+    return {
+      apiKey: stored.apiKey?.trim() ?? '',
+      model: stored.model?.trim() || LEGACY_XAI_MODEL,
+      protocol: 'openai-chat',
+      baseUrl: LEGACY_XAI_BASE_URL,
+    };
+  }
+
+  const protocol = PROTOCOLS.has(stored.protocol as ApiProtocol)
+    ? (stored.protocol as ApiProtocol)
     : DEFAULT_PROTOCOL;
 
   return {
-    apiKey: stored?.apiKey?.trim() ?? '',
-    model: stored?.model?.trim() || DEFAULT_MODEL,
+    apiKey: stored.apiKey?.trim() ?? '',
+    model: stored.model?.trim() || DEFAULT_MODEL,
     protocol,
-    baseUrl: stored?.baseUrl?.trim() || DEFAULT_BASE_URL,
+    baseUrl: stored.baseUrl?.trim() || DEFAULT_BASE_URL,
   };
 }
 
@@ -37,9 +61,9 @@ export async function saveSettings(settings: Settings): Promise<void> {
   await browser.storage.local.set({
     [SETTINGS_KEY]: {
       apiKey: settings.apiKey.trim(),
-      model: settings.model.trim() || DEFAULT_MODEL,
+      model: settings.model.trim(),
       protocol: settings.protocol,
-      baseUrl: settings.baseUrl.trim() || DEFAULT_BASE_URL,
+      baseUrl: settings.baseUrl.trim(),
     },
   });
 }
