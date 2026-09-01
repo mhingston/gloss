@@ -90,8 +90,7 @@ export function SettingsForm({ compact = false }: Props) {
         />
       </label>
       <p className="hint">
-        Gloss appends <code>{endpoint}</code> to the base URL. Existing installs keep using xAI at{' '}
-        <code>{DEFAULT_BASE_URL}</code>. Your key stays on this computer and is only sent to the configured upstream.
+        Gloss appends <code>{endpoint}</code> to the configured base URL. Your key stays on this computer and is only sent to that upstream.
       </p>
       {!userScriptsOn && (
         <p className="hint">
