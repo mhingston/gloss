@@ -19,6 +19,19 @@ export type SiteState = {
   prompts: SitePrompt[];
 };
 
+export type PageRegionKind =
+  | 'header'
+  | 'nav'
+  | 'main'
+  | 'aside'
+  | 'footer'
+  | 'article'
+  | 'form'
+  | 'dialog'
+  | 'region';
+
+export type PageRegionImportance = 'primary' | 'supporting' | 'chrome';
+
 export type PageContext = {
   url: string;
   title: string;
@@ -27,13 +40,30 @@ export type PageContext = {
     background: string;
     color: string;
     font: string;
+    fontSize: string;
+    lineHeight: string;
+    customProperties: Array<{
+      name: string;
+      value: string;
+    }>;
   };
   landmarks: Array<{
     tag: string;
     id?: string;
     role?: string;
     classes: string[];
+    kind: PageRegionKind;
+    importance: PageRegionImportance;
+    interactive: boolean;
+    label?: string;
   }>;
+  interaction: {
+    links: number;
+    buttons: number;
+    inputs: number;
+    forms: number;
+    dialogs: number;
+  };
   samples: Array<{
     tag: string;
     text?: string;
