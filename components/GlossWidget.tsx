@@ -259,7 +259,7 @@ export function GlossWidget({
           <div className="body-inner">
             {!hasApiKey && (
               <p className="banner">
-                Add an xAI API key first.{' '}
+                Add an API key first.{' '}
                 <button type="button" className="linkish" onClick={() => void onOpenSettings()}>
                   Open settings
                 </button>
