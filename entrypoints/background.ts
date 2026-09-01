@@ -1,4 +1,4 @@
-import { glossWithGrok } from '@/lib/grok';
+import { glossWithModel } from '@/lib/gloss';
 import { getSettings } from '@/lib/storage';
 import { isUserScriptsAvailable } from '@/lib/userScripts';
 import type {
@@ -82,7 +82,7 @@ async function handleGloss(
     return {
       ok: false,
       needsApiKey: true,
-      error: 'Add your xAI API key in settings.',
+      error: 'Add an API key in settings.',
     };
   }
 
@@ -107,9 +107,8 @@ async function handleGloss(
     }
 
     const allowJs = await isUserScriptsAvailable();
-    const result = await glossWithGrok({
-      apiKey: settings.apiKey,
-      model: settings.model,
+    const result = await glossWithModel({
+      settings,
       prompt: message.prompt,
       screenshotDataUrl,
       pageContext: message.pageContext,
@@ -152,8 +151,6 @@ async function setIconTheme(tabId: number | undefined, dark: boolean) {
   }
   await browser.action.setIcon({ tabId, path });
 }
-
-
 
 function wrapPageJs(source: string): string {
   return `(function () {
