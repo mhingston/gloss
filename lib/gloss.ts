@@ -9,7 +9,9 @@ const SHARED_RULES = `Rules:
 - Emit complete CSS rules as early as possible: html/body/fonts/colors/backgrounds first, then surfaces, then controls.
 - Change the look in a noticeable, cohesive way. Do not be timid.
 - Keep the site usable: never hide primary content, destroy scrolling, disable inputs, or cover click targets.
+- Treat semantic regions marked primary or interactive as protected from destructive changes: restyle them, but do not remove, replace, or reorder their core content unless the user explicitly asks.
 - Prefer semantic tags, roles, [data-testid], aria attributes, and stable class names. Avoid hashed one-off utility classes unless required.
+- Reuse useful site CSS custom properties when they support a coherent result; do not assume every captured variable is globally safe.
 - Use !important when the host stylesheet would otherwise win.
 - You may hide noisy chrome (ads, right-rail trends, dense counters) if it serves the request.
 - Do not include selectors or script that target the extension UI (gloss-panel, #gloss-root, or anything gloss-).`;
@@ -74,8 +76,10 @@ export async function glossWithModel(options: {
     `URL: ${options.pageContext.url}`,
     `Title: ${options.pageContext.title}`,
     `Viewport: ${options.pageContext.viewport}`,
-    `Computed body: bg=${options.pageContext.theme.background}; color=${options.pageContext.theme.color}; font=${options.pageContext.theme.font}`,
-    `Landmarks: ${JSON.stringify(options.pageContext.landmarks)}`,
+    `Computed body: bg=${options.pageContext.theme.background}; color=${options.pageContext.theme.color}; font=${options.pageContext.theme.font}; font-size=${options.pageContext.theme.fontSize}; line-height=${options.pageContext.theme.lineHeight}`,
+    `Site CSS custom properties: ${JSON.stringify(options.pageContext.theme.customProperties)}`,
+    `Semantic regions: ${JSON.stringify(options.pageContext.landmarks)}`,
+    `Interactive inventory: ${JSON.stringify(options.pageContext.interaction)}`,
     `Visible samples: ${JSON.stringify(options.pageContext.samples)}`,
     `Prior prompts on this page:\n${history}`,
     options.previousCss
