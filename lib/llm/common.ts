@@ -16,11 +16,15 @@ export async function readSseJson(
   const consumeLine = (line: string) => {
     const payload = line.startsWith('data:') ? line.slice(5).trim() : '';
     if (!payload || payload === '[DONE]') return;
+
+    let event: unknown;
     try {
-      onEvent(JSON.parse(payload));
+      event = JSON.parse(payload);
     } catch {
       // Ignore malformed/non-JSON SSE events from compatible upstreams.
+      return;
     }
+    onEvent(event);
   };
 
   while (true) {
