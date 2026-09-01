@@ -8,7 +8,14 @@ import type {
 } from '@/lib/types';
 
 export default defineBackground(() => {
+  void clearActionPopup();
+
+  browser.runtime.onStartup.addListener(() => {
+    void clearActionPopup();
+  });
+
   browser.runtime.onInstalled.addListener((details) => {
+    void clearActionPopup();
     if (details.reason === 'install') {
       void browser.runtime.openOptionsPage();
     }
@@ -58,6 +65,14 @@ export default defineBackground(() => {
     }
   });
 });
+
+async function clearActionPopup() {
+  try {
+    await browser.action.setPopup({ popup: '' });
+  } catch {
+    // The manifest should already omit default_popup; this only clears stale runtime state.
+  }
+}
 
 async function toggleGloss(tabId: number) {
   try {
