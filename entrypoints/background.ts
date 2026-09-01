@@ -14,15 +14,21 @@ export default defineBackground(() => {
     }
   });
 
+  browser.action.onClicked.addListener(async (tab) => {
+    const settings = await getSettings();
+    if (!settings.apiKey || !settings.baseUrl || !settings.model) {
+      await openOptionsPage();
+      return;
+    }
+    if (tab.id == null) return;
+    await toggleGloss(tab.id);
+  });
+
   browser.commands.onCommand.addListener(async (command) => {
     if (command !== 'toggle-gloss') return;
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (tab?.id == null) return;
-    try {
-      await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_PANEL' } satisfies ExtensionMessage);
-    } catch {
-      // No content script on this page (chrome://, Web Store, etc.)
-    }
+    await toggleGloss(tab.id);
   });
 
   browser.runtime.onMessage.addListener((message: ExtensionMessage, sender) => {
@@ -52,6 +58,14 @@ export default defineBackground(() => {
     }
   });
 });
+
+async function toggleGloss(tabId: number) {
+  try {
+    await browser.tabs.sendMessage(tabId, { type: 'TOGGLE_PANEL' } satisfies ExtensionMessage);
+  } catch {
+    // No content script on this page (chrome://, Web Store, etc.)
+  }
+}
 
 async function openOptionsPage() {
   const url = browser.runtime.getURL('/options.html');
