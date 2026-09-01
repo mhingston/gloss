@@ -1,5 +1,5 @@
-import type { Settings, SiteState } from './types';
-import { DEFAULT_MODEL } from './types';
+import type { ApiProtocol, Settings, SiteState } from './types';
+import { DEFAULT_BASE_URL, DEFAULT_MODEL, DEFAULT_PROTOCOL } from './types';
 
 const SETTINGS_KEY = 'settings';
 const SITES_KEY = 'sites';
@@ -12,12 +12,24 @@ const EMPTY_SITE: SiteState = {
   prompts: [],
 };
 
+const PROTOCOLS = new Set<ApiProtocol>([
+  'openai-chat',
+  'openai-responses',
+  'anthropic-messages',
+]);
+
 export async function getSettings(): Promise<Settings> {
   const data = await browser.storage.local.get(SETTINGS_KEY);
   const stored = data[SETTINGS_KEY] as Partial<Settings> | undefined;
+  const protocol = PROTOCOLS.has(stored?.protocol as ApiProtocol)
+    ? (stored?.protocol as ApiProtocol)
+    : DEFAULT_PROTOCOL;
+
   return {
     apiKey: stored?.apiKey?.trim() ?? '',
     model: stored?.model?.trim() || DEFAULT_MODEL,
+    protocol,
+    baseUrl: stored?.baseUrl?.trim() || DEFAULT_BASE_URL,
   };
 }
 
@@ -26,6 +38,8 @@ export async function saveSettings(settings: Settings): Promise<void> {
     [SETTINGS_KEY]: {
       apiKey: settings.apiKey.trim(),
       model: settings.model.trim() || DEFAULT_MODEL,
+      protocol: settings.protocol,
+      baseUrl: settings.baseUrl.trim() || DEFAULT_BASE_URL,
     },
   });
 }
