@@ -3,7 +3,6 @@ body,
 #root {
   overflow: visible;
   border-radius: 0;
-  color-scheme: light;
 }
 
 body {
@@ -36,7 +35,6 @@ body {
   min-width: 24rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 14px;
-  background: #ffffff;
 }
 
 .options .settings button {

@@ -1,6 +1,6 @@
 export const DEFAULT_PROTOCOL: ApiProtocol = 'openai-chat';
-export const DEFAULT_BASE_URL = 'https://api.x.ai/v1';
-export const DEFAULT_MODEL = 'grok-4.5';
+export const DEFAULT_BASE_URL = '';
+export const DEFAULT_MODEL = '';
 
 export type ApiProtocol = 'openai-chat' | 'openai-responses' | 'anthropic-messages';
 
