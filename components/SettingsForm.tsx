@@ -39,7 +39,12 @@ export function SettingsForm({ compact = false }: Props) {
     return <p className="muted">Loading…</p>;
   }
 
-  const endpoint = protocol === 'openai-responses' ? '/responses' : '/chat/completions';
+  const endpoint =
+    protocol === 'openai-responses'
+      ? '/responses'
+      : protocol === 'anthropic-messages'
+        ? '/messages'
+        : '/chat/completions';
 
   return (
     <form className={compact ? 'settings compact' : 'settings'} onSubmit={onSubmit}>
@@ -48,6 +53,7 @@ export function SettingsForm({ compact = false }: Props) {
         <select value={protocol} onChange={(event) => setProtocol(event.target.value as ApiProtocol)}>
           <option value="openai-chat">OpenAI Chat Completions</option>
           <option value="openai-responses">OpenAI Responses</option>
+          <option value="anthropic-messages">Anthropic Messages</option>
         </select>
       </label>
       <label>

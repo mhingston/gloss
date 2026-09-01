@@ -1,4 +1,5 @@
 import { extractStreamableCss, parseModelOutput } from './css';
+import { streamAnthropicMessages } from './llm/anthropicMessages';
 import { streamOpenAIChat } from './llm/openaiChat';
 import { streamOpenAIResponses } from './llm/openaiResponses';
 import type { PageContext, Settings } from './types';
@@ -110,6 +111,9 @@ export async function glossWithModel(options: {
       break;
     case 'openai-responses':
       text = await streamOpenAIResponses(transportOptions);
+      break;
+    case 'anthropic-messages':
+      text = await streamAnthropicMessages(transportOptions);
       break;
     default:
       throw new Error('That API type is not supported by this version of Gloss.');
