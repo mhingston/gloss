@@ -13,7 +13,7 @@ Unpacked Chrome extension that personalizes any website with a floating orb. It 
 5. On the Gloss card, turn on **Allow User Scripts** (needed to run generated JS on strict sites like x.com).
 6. Open the Gloss options page and configure the API type, base URL, API key, and model.
 
-Existing installs remain on the original xAI defaults: `https://api.x.ai/v1`, model `grok-4.5`, using the OpenAI Chat Completions wire format.
+New installs start without a provider-specific base URL or model selected. Existing saved settings are preserved on upgrade.
 
 ## API upstreams
 
