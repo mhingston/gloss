@@ -8,34 +8,21 @@ import type {
 } from '@/lib/types';
 
 export default defineBackground(() => {
-  void clearActionPopup();
-
-  browser.runtime.onStartup.addListener(() => {
-    void clearActionPopup();
-  });
-
   browser.runtime.onInstalled.addListener((details) => {
-    void clearActionPopup();
     if (details.reason === 'install') {
       void browser.runtime.openOptionsPage();
     }
-  });
-
-  browser.action.onClicked.addListener(async (tab) => {
-    const settings = await getSettings();
-    if (!settings.apiKey || !settings.baseUrl || !settings.model) {
-      await openOptionsPage();
-      return;
-    }
-    if (tab.id == null) return;
-    await toggleGloss(tab.id);
   });
 
   browser.commands.onCommand.addListener(async (command) => {
     if (command !== 'toggle-gloss') return;
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (tab?.id == null) return;
-    await toggleGloss(tab.id);
+    try {
+      await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_PANEL' } satisfies ExtensionMessage);
+    } catch {
+      // No content script on this page (chrome://, Web Store, etc.)
+    }
   });
 
   browser.runtime.onMessage.addListener((message: ExtensionMessage, sender) => {
@@ -65,22 +52,6 @@ export default defineBackground(() => {
     }
   });
 });
-
-async function clearActionPopup() {
-  try {
-    await browser.action.setPopup({ popup: '' });
-  } catch {
-    // The manifest should already omit default_popup; this only clears stale runtime state.
-  }
-}
-
-async function toggleGloss(tabId: number) {
-  try {
-    await browser.tabs.sendMessage(tabId, { type: 'TOGGLE_PANEL' } satisfies ExtensionMessage);
-  } catch {
-    // No content script on this page (chrome://, Web Store, etc.)
-  }
-}
 
 async function openOptionsPage() {
   const url = browser.runtime.getURL('/options.html');

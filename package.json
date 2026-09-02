@@ -7,11 +7,10 @@
   "scripts": {
     "dev": "wxt",
     "dev:firefox": "wxt -b firefox",
-    "clean": "wxt clean",
-    "build": "wxt clean && wxt build && node scripts/assert-action-manifest.mjs .output/chrome-mv3/manifest.json",
-    "build:firefox": "wxt clean && wxt build -b firefox",
-    "zip": "wxt clean && wxt zip",
-    "zip:firefox": "wxt clean && wxt zip -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
     "playground": "vite --config playground/vite.config.ts",
     "postinstall": "wxt prepare"

@@ -309,9 +309,6 @@ export function GlossWidget({
                 }}
               />
               <div className="row">
-                <button type="button" className="ghost" disabled={busy} onClick={() => onOpenSettings()}>
-                  Settings
-                </button>
                 <button type="button" className="ghost" disabled={!css || busy} onClick={() => onReset()}>
                   Reset
                 </button>
