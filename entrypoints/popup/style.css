@@ -1,4 +1,4 @@
-@import './theme.css';
+@import '../../styles/theme.css';
 
 :root {
   font-family: var(--gloss-font);
@@ -15,6 +15,34 @@ html,
 body {
   margin: 0;
   background: var(--gloss-bg);
+}
+
+body {
+  min-width: 320px;
+}
+
+.popup {
+  padding: 18px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+header {
+  margin-bottom: 16px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+header p,
+.muted {
+  margin: 2px 0 0;
+  color: var(--gloss-muted);
+  font-size: 12px;
 }
 
 .settings {
@@ -73,8 +101,7 @@ body {
   box-shadow: none;
 }
 
-.hint,
-.muted {
+.hint {
   margin: 0;
   color: var(--gloss-muted);
   font-size: 12px;
@@ -94,4 +121,15 @@ button {
   font-weight: 500;
   padding: 9px 16px;
   cursor: pointer;
+}
+
+ol {
+  margin: 16px 0 0;
+  padding-left: 18px;
+  color: var(--gloss-muted);
+  font-size: 12px;
+}
+
+ol li + li {
+  margin-top: 4px;
 }

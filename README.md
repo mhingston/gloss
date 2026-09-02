@@ -30,11 +30,9 @@ The base URL is configurable, so compatible gateways and self-hosted upstreams c
 ## Use
 
 1. Open any normal website.
-2. Click the **Gloss toolbar icon** or the in-page orb, or press ⌘⇧Y / Ctrl+Shift+Y.
+2. Click the **Gloss** orb, or press ⌘⇧Y / Ctrl+Shift+Y.
 3. Prompt like `make this more zen` or `calm reading mode, hide the noise`.
 4. Keep going. Each run captures a fresh screenshot so the model can iterate.
-
-If the API settings are incomplete, the toolbar icon opens the options page instead. You can also reopen settings from the Gloss panel.
 
 **Reset** clears the restyle for that origin. JavaScript changes that did not register a cleanup hook may need a page refresh.
 
